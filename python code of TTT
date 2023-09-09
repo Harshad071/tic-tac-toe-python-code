@@ -1,0 +1,120 @@
+from IPython.display import clear_output
+
+def display_board(board):
+    clear_output()  # Remember, this only works in jupyter!
+    
+    print('   |   |')
+    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+    print('   |   |')
+    
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('   |   |')
+
+    #fuction t0 take in a player input and assign their marker x or o 
+def player_input():
+    output=('player 1 marker,player 2 marker')
+    marker=' '
+    while not (marker=='X'or marker=='O'):
+        marker=input('player 1:choose X or O: ').upper()
+    if marker=='X':
+        return('X','O')
+    else:
+        return('O','X')
+    
+#function that takes in the board list object,a marker x or o and a desired position
+def place_marker(board,marker,position):
+    board[position]=marker    
+    
+#function that uses te random module to randomly decide which player goes first
+import random
+def choose_first():
+    flip=random.randint(0,1)
+    if flip==0:
+        return 'player 2'
+    else:
+        return 'player 1' 
+#function that returns a boolean indicating whether a space on the board is free
+def space_check(board,position):
+    return board[position]==' ' 
+#function that checks if the board is full and returns true is full and false if not
+def full_board_check(board):
+    for i in range(1,10):
+        if space_check(board,i):
+            return False
+        
+    #board is full if we return true
+    return True
+#function that asks for players next position as a no 1 to 9 and thn checks if the position is free or not
+def player_choice(board):
+    position=0
+    while position not in [1,2,3,4,5,6,7,8,9] or not space_check(board,position):
+        position = int(input('choose a position:(1-9)'))
+    return position
+#function that asks the player if they want to play again 
+def replay():
+    choice=input('play again?enter yes or no')
+    return choice == 'yes'
+#now run the final game
+print('WELCOME TO TIC TAC TOE')
+while True:
+    #play game
+    #set everything
+    the_board=[' ']*10
+    player1_marker,player2_marker=player_input()
+    turn=choose_first()
+    print(turn  + ' will go first')
+    play_game=input('ready to play? Y or N?')
+    if play_game.upper()=='Y':
+        game_on=True
+    else:
+        game_on=False
+        
+    while game_on:
+        if turn=='player 1':
+            #SHOW THE BOARD
+            display_board(the_board)
+            #choose the position
+            position=player_choice(the_board)
+            #place the marker on the position
+            place_marker(the_board,player1_marker,position)
+            #check if they won
+            if win_check(the_board,player1_marker):
+                display_board(the_board)
+                print('player 1 has won!!')
+                game_on=False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('tie game')
+                    break
+                else:
+                    turn="player 2"
+                
+        else:
+             #SHOW THE BOARD
+            display_board(the_board)
+            #choose the position
+            position=player_choice(the_board)
+            #place the marker on the position
+            place_marker(the_board,player2_marker,position)
+            #check if they won
+            if win_check(the_board,player2_marker):
+                display_board(the_board)
+                print('player 2 has won!!')
+                game_on=False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('tie game')
+                    break
+                else:
+                    turn="player 1"
+                
+    if not replay():
+        break
